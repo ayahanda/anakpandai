@@ -180,36 +180,10 @@ function initAudioContext() {
     }
 }
 
-// Sebut Teks Menggunakan Web Speech API
+// Sebut Teks Menggunakan Web Speech API (Dinyahaktifkan mengikut permintaan pengguna)
 function speakText(text, lang) {
-    if (isMuted) return;
-    if (!window.speechSynthesis) return;
-
-    // Hentikan sebarang pertuturan yang sedang aktif
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Pilih suara berdasarkan bahasa (menyokong Bahasa Arab, Melayu, dan Inggeris)
-    let targetLang = 'en-US';
-    if (lang === 'ms') {
-        targetLang = 'ms-MY';
-    } else if (lang === 'ar') {
-        targetLang = 'ar-SA';
-    }
-    utterance.lang = targetLang;
-    
-    // Cari suara yang sepadan
-    const voice = voices.find(v => v.lang.includes(targetLang) || (lang === 'ms' && v.lang.includes('id'))); // Gunakan suara Indonesia sebagai sandaran BM jika tiada
-    if (voice) {
-        utterance.voice = voice;
-    }
-    
-    // Konfigurasi suara comel untuk kanak-kanak
-    utterance.pitch = 1.35; // Pitch lebih tinggi sedikit agar kedengaran lebih comel
-    utterance.rate = 0.85;  // Kelajuan sederhana perlahan untuk mudah difahami
-
-    window.speechSynthesis.speak(utterance);
+    // TTS dinyahaktifkan untuk memastikan hanya fail audio tempatan (assets) digunakan.
+    console.log("TTS System Disabled. Requested text:", text);
 }
 
 // Kesan Bunyi Sintetik Menggunakan Web Audio API (Tiada fail audio luaran diperlukan!)
@@ -987,10 +961,9 @@ function changeTraceLetter() {
     
     // Sebut huruf/nombor yang dipilih
     if (currentCategory === 'abc') {
-        speakText(val, currentLanguage);
+        playLetterSound(val, currentLanguage);
     } else if (currentCategory === '123') {
-        const text = numberWords[currentLanguage][parseInt(val) - 1];
-        speakText(text, currentLanguage);
+        playNumberSound(val, currentLanguage);
     } else if (currentCategory === 'jawi') {
         const idx = jawiData.findIndex(item => item.letter === val);
         playJawiLetterSound(idx + 1);
